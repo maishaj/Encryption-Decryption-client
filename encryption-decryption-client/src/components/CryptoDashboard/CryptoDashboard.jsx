@@ -30,12 +30,16 @@ const CryptoDashboard = () => {
   };
 
   const handleProcess = async (action) => {
-    if (inputType === "text" && !textInput.trim()) return alert("Please enter text to process!");
-    if (inputType === "image" && !imageFile) return alert("Please upload an image!");
-    
+    if (inputType === "text" && !textInput.trim())
+      return alert("Please enter text to process!");
+    if (inputType === "image" && !imageFile)
+      return alert("Please upload an image!");
+
     if (isAsymmetric) {
-      if (action === "encrypt" && !publicKey) return alert("Public key is required for encryption!");
-      if (action === "decrypt" && !privateKey) return alert("Private key is required for decryption!");
+      if (action === "encrypt" && !publicKey)
+        return alert("Public key is required for encryption!");
+      if (action === "decrypt" && !privateKey)
+        return alert("Private key is required for decryption!");
     } else {
       if (!secretKey) return alert("Secret key is required!");
     }
@@ -66,23 +70,53 @@ const CryptoDashboard = () => {
         formData,
         {
           responseType: inputType === "image" ? "blob" : "json",
-        }
+        },
       );
 
       if (inputType === "image") {
         const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
-        setOutput({ type: "image", data: blobUrl, name: `${action === "encrypt" ? "encrypted" : "decrypted"}_image.png` });
+        setOutput({
+          type: "image",
+          data: blobUrl,
+          name: `${action === "encrypt" ? "encrypted" : "decrypted"}_image.png`,
+        });
       } else {
-        setOutput({ type: "text", data: response.data.result || JSON.stringify(response.data) });
+        setOutput({
+          type: "text",
+          data: response.data.result || JSON.stringify(response.data),
+        });
       }
     } catch (error) {
       console.error("Operation failed", error);
-      alert("Error processing your request. Please check the backend configuration.");
+
+      // If the response is wrapped inside a binary blob, read it to display the true backend error
+      if (error.response && error.response.data instanceof Blob) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const errorJson = JSON.parse(reader.result);
+            alert(
+              `Error: ${errorJson.error || "Internal cryptographic engine processing error."}`,
+            );
+          } catch {
+            alert(
+              "Error processing your cryptographic request. Check key parameters.",
+            );
+          }
+        };
+        reader.readAsText(error.response.data);
+      } else {
+        const errorMsg =
+          error.response?.data?.error ||
+          "Error processing your request. Please check your backend configuration.";
+        alert(errorMsg);
+      }
     } finally {
       setLoading(false);
     }
   };
 
+ 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 antialiased font-sans flex flex-col justify-between">
       {/* Top Navigation Bar */}
@@ -92,24 +126,31 @@ const CryptoDashboard = () => {
             Ω
           </div>
           <div>
-            <h1 className="text-sm font-bold tracking-tight text-slate-900 uppercase">CipherEngine</h1>
-            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest -mt-0.5">Symmetric & Asymmetric Pipeline</p>
+            <h1 className="text-sm font-bold tracking-tight text-slate-900 uppercase">
+              CipherEngine
+            </h1>
+            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest -mt-0.5">
+              Symmetric & Asymmetric Pipeline
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50" />
-          <span className="text-xs font-mono font-medium text-slate-500 uppercase tracking-wider">Node Secure</span>
+          <span className="text-xs font-mono font-medium text-slate-500 uppercase tracking-wider">
+            Node Secure
+          </span>
         </div>
       </header>
 
       {/* Main Content Workspace */}
       <main className="flex-1 w-full max-w-7xl mx-auto p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-        
         {/* Left Column: Parameter Control Panel (Takes 5 cols) */}
         <section className="lg:col-span-5 bg-white border border-slate-200/60 rounded-2xl shadow-sm p-6 flex flex-col justify-between space-y-6">
           <div className="space-y-6">
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">01. Configuration Mode</h2>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
+                01. Configuration Mode
+              </h2>
               <div className="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl">
                 <button
                   type="button"
@@ -130,7 +171,9 @@ const CryptoDashboard = () => {
 
             {/* Dynamic Content Fields */}
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">02. Payload Entry</h2>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">
+                02. Payload Entry
+              </h2>
               {inputType === "text" ? (
                 <textarea
                   rows={4}
@@ -149,12 +192,20 @@ const CryptoDashboard = () => {
                   />
                   {imagePreview ? (
                     <div className="relative z-0 max-h-20 overflow-hidden rounded-lg border border-slate-200">
-                      <img src={imagePreview} alt="Preview" className="h-20 w-auto object-cover" />
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="h-20 w-auto object-cover"
+                      />
                     </div>
                   ) : (
                     <div className="space-y-1">
-                      <p className="text-xs font-semibold text-slate-700">Drop your cryptographic image target here</p>
-                      <p className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Strictly PNG / JPG / WEBP</p>
+                      <p className="text-xs font-semibold text-slate-700">
+                        Drop your cryptographic image target here
+                      </p>
+                      <p className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                        Strictly PNG / JPG / WEBP
+                      </p>
                     </div>
                   )}
                 </div>
@@ -163,7 +214,9 @@ const CryptoDashboard = () => {
 
             {/* Cryptography Framework Selection */}
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">03. Cryptosystem Scheme</h2>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">
+                03. Cryptosystem Scheme
+              </h2>
               <div className="relative">
                 <select
                   value={algorithm}
@@ -183,11 +236,15 @@ const CryptoDashboard = () => {
 
             {/* Core Cryptographic Keys */}
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">04. Authentication Keys</h2>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">
+                04. Authentication Keys
+              </h2>
               <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-100 space-y-4">
                 {!isAsymmetric ? (
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Symmetric Key String</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                      Symmetric Key String
+                    </label>
                     <input
                       type="text"
                       placeholder="e.g., PASSPHRASE_VAL_89"
@@ -199,7 +256,9 @@ const CryptoDashboard = () => {
                 ) : (
                   <div className="grid grid-cols-1 gap-3">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-indigo-600 mb-1.5">Public Key Component (e, n)</label>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-indigo-600 mb-1.5">
+                        Public Key Component (e, n)
+                      </label>
                       <textarea
                         rows={2}
                         placeholder="Paste recipient public key elements..."
@@ -209,7 +268,9 @@ const CryptoDashboard = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-rose-600 mb-1.5">Private Key Component (d, n)</label>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-rose-600 mb-1.5">
+                        Private Key Component (d, n)
+                      </label>
                       <textarea
                         rows={2}
                         placeholder="Paste structural private decrypter matrix..."
@@ -250,7 +311,9 @@ const CryptoDashboard = () => {
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-slate-900" />
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-800">Pipeline Analytics Output</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                  Pipeline Analytics Output
+                </span>
               </div>
               {output && output.type === "text" && (
                 <button
@@ -274,8 +337,13 @@ const CryptoDashboard = () => {
 
               {!output ? (
                 <div className="text-center space-y-1.5 z-10">
-                  <p className="text-xs font-mono font-bold text-slate-500 uppercase tracking-widest">Console Inactive</p>
-                  <p className="text-[11px] text-slate-600 max-w-xs font-medium">Configure inputs on the left plane and initialize the script engine pipeline.</p>
+                  <p className="text-xs font-mono font-bold text-slate-500 uppercase tracking-widest">
+                    Console Inactive
+                  </p>
+                  <p className="text-[11px] text-slate-600 max-w-xs font-medium">
+                    Configure inputs on the left plane and initialize the script
+                    engine pipeline.
+                  </p>
                 </div>
               ) : output.type === "text" ? (
                 <div className="w-full h-full overflow-y-auto font-mono text-xs text-emerald-400 break-all text-left whitespace-pre-wrap self-start pt-4">
@@ -284,7 +352,11 @@ const CryptoDashboard = () => {
               ) : (
                 <div className="space-y-4 w-full flex flex-col items-center z-10">
                   <div className="max-w-xs overflow-hidden rounded-xl border border-slate-800 p-2 bg-slate-900 shadow-xl">
-                    <img src={output.data} alt="Processed Stream" className="max-h-56 w-auto rounded-lg object-contain mx-auto" />
+                    <img
+                      src={output.data}
+                      alt="Processed Stream"
+                      className="max-h-56 w-auto rounded-lg object-contain mx-auto"
+                    />
                   </div>
                   <a
                     href={output.data}
@@ -303,7 +375,6 @@ const CryptoDashboard = () => {
             <span>SYSTEM_CORE_OK</span>
           </div>
         </section>
-
       </main>
 
       {/* Footer Branding */}
