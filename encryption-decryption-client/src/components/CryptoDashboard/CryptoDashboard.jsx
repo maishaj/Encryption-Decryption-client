@@ -13,7 +13,7 @@ const CryptoDashboard = () => {
   const [publicKey, setPublicKey] = useState("");
   const [privateKey, setPrivateKey] = useState("");
 
-  const [algorithm, setAlgorithm] = useState("playfair");
+  const [algorithm, setAlgorithm] = useState("caesar");
   const [loading, setLoading] = useState(false);
   const [output, setOutput] = useState(null);
 
@@ -116,7 +116,6 @@ const CryptoDashboard = () => {
     }
   };
 
- 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 antialiased font-sans flex flex-col justify-between">
       {/* Top Navigation Bar */}
@@ -223,6 +222,7 @@ const CryptoDashboard = () => {
                   onChange={(e) => setAlgorithm(e.target.value)}
                   className="w-full appearance-none bg-slate-50/50 border border-slate-200 focus:bg-white rounded-xl p-3.5 text-xs font-bold tracking-wide text-slate-800 focus:outline-none focus:border-slate-900 transition-all cursor-pointer"
                 >
+                  <option value="caesar">Caesar Cipher — Symmetric</option>
                   <option value="playfair">Playfair Cipher — Symmetric</option>
                   <option value="hill">Hill Cipher — Symmetric</option>
                   <option value="vigenere">Vigenere Cipher — Symmetric</option>
