@@ -121,7 +121,7 @@ const CryptoDashboard = () => {
       {/* Top Navigation Bar */}
       <header className="w-full bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <div className="bg-slate-900 text-white p-2 rounded-lg font-mono text-sm font-bold tracking-wider shadow-sm">
+          <div className="bg-slate-900 text-white p-2 px-4 rounded-lg font-mono text-md font-bold tracking-wider shadow-sm">
             Ω
           </div>
           <div>
@@ -135,9 +135,6 @@ const CryptoDashboard = () => {
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50" />
-          <span className="text-xs font-mono font-medium text-slate-500 uppercase tracking-wider">
-            Node Secure
-          </span>
         </div>
       </header>
 
@@ -171,7 +168,7 @@ const CryptoDashboard = () => {
             {/* Dynamic Content Fields */}
             <div>
               <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">
-                02. Payload Entry
+                02. Message Entry
               </h2>
               {inputType === "text" ? (
                 <textarea
@@ -305,7 +302,7 @@ const CryptoDashboard = () => {
         </section>
 
         {/* Right Column: Execution Output Console (Takes 7 cols) */}
-        <section className="lg:col-span-7 bg-white border border-slate-200/60 rounded-2xl shadow-sm p-6 flex flex-col justify-between h-full min-h-[520px]">
+        <section className="lg:col-span-7 bg-white border border-slate-200/60 rounded-2xl shadow-sm p-6 flex flex-col justify-between h-full min-h-130">
           <div className="w-full flex flex-col h-full justify-between">
             {/* Output Panel Header Control */}
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
@@ -319,7 +316,7 @@ const CryptoDashboard = () => {
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(output.data);
-                    alert("Output copied to clipboard!");
+                      alert("Output copied to clipboard!");
                   }}
                   className="text-[11px] font-bold uppercase bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 py-1.5 px-3 rounded-lg transition"
                 >
@@ -331,8 +328,8 @@ const CryptoDashboard = () => {
             {/* Render Interface Shell */}
             <div className="my-6 w-full bg-slate-950 border border-slate-900/40 rounded-xl p-5 flex-1 flex items-center justify-center relative overflow-hidden min-h-[360px]">
               {/* Subtle inner code background accent text */}
-              <div className="absolute top-3 left-4 font-mono text-[9px] text-slate-800 select-none pointer-events-none">
-                SECURE_BUFFER_STREAM // OUTPUT_LOG
+              <div className="absolute top-3 left-4 font-mono text-[9px] text-slate-300 select-none pointer-events-none">
+                // OUTPUT_LOG
               </div>
 
               {!output ? (
@@ -379,7 +376,7 @@ const CryptoDashboard = () => {
 
       {/* Footer Branding */}
       <footer className="w-full py-4 text-center text-[10px] font-mono tracking-wider text-slate-400 border-t border-slate-200/40 bg-white">
-        © 2026 CRYPTOENGINE LABS • APP_V2.4.0
+        © 2026 CRYPTOENGINE
       </footer>
     </div>
   );
